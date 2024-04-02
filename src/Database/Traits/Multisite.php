@@ -416,7 +416,7 @@ trait Multisite
 
         // Replicate without save
         if (!$otherModel) {
-            $otherModel = $this->replicateWithRelations();
+            $otherModel = $this->replicateWithRelations($this->getMultisiteConfig('except'));
             $otherModel->{$this->getSiteIdColumn()} = $siteId;
             $otherModel->site_root_id = $this->site_root_id ?: $this->id;
         }
