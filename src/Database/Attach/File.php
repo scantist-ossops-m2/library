@@ -184,7 +184,7 @@ class File extends Model
         }
 
         if (empty($filename)) {
-            $filename = FileHelper::basename($url);
+            $filename = basename(parse_url($url, PHP_URL_PATH));
         }
 
         return $this->fromData($data->body(), $filename);
