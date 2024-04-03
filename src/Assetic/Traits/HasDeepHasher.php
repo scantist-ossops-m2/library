@@ -4,7 +4,7 @@ use File;
 use October\Rain\Assetic\Factory\AssetFactory;
 
 /**
- * Combiner helper class
+ * HasDeepHasher checks if imports have changed their content and busts the cache
  *
  * @package october/assetic
  * @author Alexey Bobkov, Samuel Georges
@@ -48,7 +48,6 @@ trait HasDeepHasher
 
     /**
      * setHashOnCombinerFilters busts the cache based on a different cache key.
-     * @return void
      */
     protected function setDeepHashKeyOnFilters($hash)
     {

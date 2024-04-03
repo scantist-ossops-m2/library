@@ -118,7 +118,7 @@ class LessphpFilter implements DependencyExtractorInterface
     public function getChildren(AssetFactory $factory, $content, $loadPath = null)
     {
         $loadPaths = $this->loadPaths;
-        if (null !== $loadPath) {
+        if ($loadPath !== null) {
             $loadPaths[] = $loadPath;
         }
 
@@ -128,28 +128,26 @@ class LessphpFilter implements DependencyExtractorInterface
 
         $children = [];
         foreach (LessUtils::extractImports($content) as $reference) {
-            if ('.css' === substr($reference, -4)) {
+            if (substr($reference, -4) === '.css') {
                 // skip normal css imports
                 // todo: skip imports with media queries
                 continue;
             }
 
-            if ('.less' !== substr($reference, -5)) {
+            if (substr($reference, -5) !== '.less') {
                 $reference .= '.less';
             }
 
             foreach ($loadPaths as $loadPath) {
                 if (file_exists($file = $loadPath.'/'.$reference)) {
-                    $coll = $factory->createAsset($file, array(), array('root' => $loadPath));
+                    $coll = $factory->createAsset($file, [], ['root' => $loadPath]);
                     foreach ($coll as $leaf) {
                         $leaf->ensureFilter($this);
                         $children[] = $leaf;
-                        goto next_reference;
+                        break 2;
                     }
                 }
             }
-
-            next_reference:
         }
 
         return $children;

@@ -17,15 +17,27 @@ use Less_Parser;
  */
 class LessCompiler implements FilterInterface, HashableInterface, DependencyExtractorInterface
 {
+    /**
+     * @var array presets
+     */
     protected $presets = [];
 
+    /**
+     * @var string lastHash
+     */
     protected $lastHash;
 
+    /**
+     * setPresets
+     */
     public function setPresets(array $presets)
     {
         $this->presets = $presets;
     }
 
+    /**
+     * filterLoad
+     */
     public function filterLoad(AssetInterface $asset)
     {
         $parser = new Less_Parser();
@@ -41,10 +53,16 @@ class LessCompiler implements FilterInterface, HashableInterface, DependencyExtr
         $asset->setContent($parser->getCss());
     }
 
+    /**
+     * filterDump
+     */
     public function filterDump(AssetInterface $asset)
     {
     }
 
+    /**
+     * hashAsset
+     */
     public function hashAsset($asset, $localPath)
     {
         $factory = new AssetFactory($localPath);
@@ -55,21 +73,24 @@ class LessCompiler implements FilterInterface, HashableInterface, DependencyExtr
             $allFiles[] = $child;
         }
 
-        $modifieds = [];
+        $modified = [];
         foreach ($allFiles as $file) {
-            $modifieds[] = $file->getLastModified();
+            $modified[] = $file->getLastModified();
         }
 
-        return md5(implode('|', $modifieds));
+        return md5(implode('|', $modified));
     }
 
+    /**
+     * setHash
+     */
     public function setHash($hash)
     {
         $this->lastHash = $hash;
     }
 
     /**
-     * Generates a hash for the object
+     * hash generated for the object
      * @return string
      */
     public function hash()
@@ -78,7 +99,7 @@ class LessCompiler implements FilterInterface, HashableInterface, DependencyExtr
     }
 
     /**
-     * Load children recusive
+     * getChildren loads children recursively
      */
     public function getChildren(AssetFactory $factory, $content, $loadPath = null)
     {
