@@ -37,6 +37,17 @@ class ExpandoModel extends Model
     }
 
     /**
+     * setExpandoAttributes on the model and protects the passthru values
+     */
+    public function setExpandoAttributes(array $attributes = [])
+    {
+        $this->attributes = array_merge(
+            $this->attributes,
+            array_diff_key($attributes, array_flip($this->getExpandoPassthru()))
+        );
+    }
+
+    /**
      * expandoAfterFetch constructor event
      */
     public function expandoAfterFetch()
