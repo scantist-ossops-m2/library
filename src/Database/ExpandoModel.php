@@ -72,6 +72,16 @@ class ExpandoModel extends Model
      */
     protected function getExpandoPassthru()
     {
-        return array_merge([$this->getKeyName(), $this->expandoColumn], $this->expandoPassthru);
+        $defaults = [
+            $this->expandoColumn,
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'site_root_id',
+            'updated_user_id',
+            'created_user_id'
+        ];
+
+        return array_merge($defaults, $this->expandoPassthru);
     }
 }
