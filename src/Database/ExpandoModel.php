@@ -37,6 +37,17 @@ class ExpandoModel extends Model
     }
 
     /**
+     * setExpandoAttributes on the model and protects the passthru values
+     */
+    public function setExpandoAttributes(array $attributes = [])
+    {
+        $this->attributes = array_merge(
+            $this->attributes,
+            array_diff_key($attributes, array_flip($this->getExpandoPassthru()))
+        );
+    }
+
+    /**
      * expandoAfterFetch constructor event
      */
     public function expandoAfterFetch()
@@ -72,6 +83,16 @@ class ExpandoModel extends Model
      */
     protected function getExpandoPassthru()
     {
-        return array_merge([$this->getKeyName(), $this->expandoColumn], $this->expandoPassthru);
+        $defaults = [
+            $this->expandoColumn,
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'site_root_id',
+            'updated_user_id',
+            'created_user_id'
+        ];
+
+        return array_merge($defaults, $this->expandoPassthru);
     }
 }
