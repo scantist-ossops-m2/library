@@ -79,6 +79,10 @@ class AttachOne extends MorphOneBase
 
         // The relation is set here to satisfy validation
         $this->parent->setRelation($this->relationName, $value);
+
+        $this->parent->bindEventOnce('model.afterValidate', function() {
+            $this->parent->unsetRelation($this->relationName);
+        });
     }
 
     /**
