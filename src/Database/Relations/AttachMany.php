@@ -39,6 +39,18 @@ class AttachMany extends MorphManyBase
      */
     public function setSimpleValue($value)
     {
+        // Nulling the relationship
+        if (!$value) {
+            $this->parent->setRelation($this->relationName, null);
+
+            if ($this->parent->exists) {
+                $this->parent->bindEventOnce('model.afterSave', function() {
+                    $this->ensureRelationIsEmpty();
+                });
+            }
+            return;
+        }
+
         // Append a single newly uploaded file(s)
         if ($value instanceof UploadedFile) {
             $this->parent->bindEventOnce('model.afterSave', function () use ($value) {
