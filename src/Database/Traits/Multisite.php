@@ -281,6 +281,18 @@ trait Multisite
     }
 
     /**
+     * getMultisiteKey returns the root key if multisite is used
+     */
+    public function getMultisiteKey()
+    {
+        if (!$this->isMultisiteEnabled()) {
+            return $this->getKey();
+        }
+
+        return $this->site_root_id ?: $this->getKey();
+    }
+
+    /**
      * isMultisiteEnabled allows for programmatic toggling
      * @return bool
      */
