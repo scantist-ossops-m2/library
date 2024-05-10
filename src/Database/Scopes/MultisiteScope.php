@@ -16,7 +16,7 @@ class MultisiteScope implements ScopeInterface
     /**
      * @var array extensions to be added to the builder.
      */
-    protected $extensions = ['WithSite', 'WithSites'];
+    protected $extensions = ['WithSite', 'WithSites', 'WithSyncSites'];
 
     /**
      * apply the scope to a given Eloquent query builder.
@@ -29,7 +29,7 @@ class MultisiteScope implements ScopeInterface
     }
 
     /**
-     * addWithSite
+     * addWithSite removes this scope and includes the specified site
      */
     protected function addWithSite(BuilderBase $builder)
     {
@@ -55,6 +55,16 @@ class MultisiteScope implements ScopeInterface
                 ->withoutGlobalScope($this)
                 ->whereIn($builder->getModel()->getQualifiedSiteIdColumn(), $siteIds)
             ;
+        });
+    }
+
+    /**
+     * addWithSyncSites removes this scope and includes sites that should be synced with this model
+     */
+    protected function addWithSyncSites(BuilderBase $builder)
+    {
+        $builder->macro('withSyncSites', function (BuilderBase $builder) {
+            return $builder->withSites($builder->getModel()->getMultisiteSyncSites());
         });
     }
 
