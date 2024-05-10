@@ -399,7 +399,7 @@ trait Multisite
 
         // Newly created model
         if (!$otherModel->exists) {
-            $otherModel->save();
+            $otherModel->save(['force' => true]);
         }
 
         // Restoring a trashed model
