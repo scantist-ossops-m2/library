@@ -34,7 +34,10 @@ class MultisiteScope implements ScopeInterface
     protected function addWithSite(BuilderBase $builder)
     {
         $builder->macro('withSite', function (BuilderBase $builder, $siteId) {
-            return $builder->where($builder->getModel()->getQualifiedSiteIdColumn(), $siteId);
+            return $builder
+                ->withoutGlobalScope($this)
+                ->where($builder->getModel()->getQualifiedSiteIdColumn(), $siteId)
+            ;
         });
     }
 
@@ -43,8 +46,15 @@ class MultisiteScope implements ScopeInterface
      */
     protected function addWithSites(BuilderBase $builder)
     {
-        $builder->macro('withSites', function (BuilderBase $builder) {
-            return $builder->withoutGlobalScope($this);
+        $builder->macro('withSites', function (BuilderBase $builder, $siteIds = null) {
+            if (!is_array($siteIds)) {
+                return $builder->withoutGlobalScope($this);
+            }
+
+            return $builder
+                ->withoutGlobalScope($this)
+                ->whereIn($builder->getModel()->getQualifiedSiteIdColumn(), $siteIds)
+            ;
         });
     }
 
