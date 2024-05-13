@@ -17,7 +17,7 @@ class Helper
      */
     public static function nameToId($string)
     {
-        return rtrim(str_replace('--', '-', str_replace(['[', ']'], '-', $string)), '-');
+        return rtrim(str_replace('--', '-', str_replace(['[', ']', ':', '.'], '-', $string)), '-');
     }
 
     /**

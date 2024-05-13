@@ -34,6 +34,11 @@ class ClassLoader
     public $manifest = [];
 
     /**
+     * @var array unknownClasses cache
+     */
+    protected $unknownClasses = [];
+
+    /**
      * @var bool manifestDirty if manifest needs to be written
      */
     protected $manifestDirty = false;
@@ -68,12 +73,20 @@ class ClassLoader
      */
     public function load($class): bool
     {
+        if (!str_contains($class, '\\')) {
+            return false;
+        }
+
         if (
             isset($this->manifest[$class]) &&
             is_file($fullPath = $this->basePath.DIRECTORY_SEPARATOR.$this->manifest[$class])
         ) {
             require $fullPath;
             return true;
+        }
+
+        if (isset($this->unknownClasses[$class])) {
+            return false;
         }
 
         [$lowerClass, $upperClass] = $this->normalizeClass($class);
@@ -93,6 +106,8 @@ class ClassLoader
                 return true;
             }
         }
+
+        $this->unknownClasses[$class] = true;
 
         return false;
     }
@@ -150,7 +165,7 @@ class ClassLoader
 
         $this->registered = spl_autoload_register(function($class) {
             $this->load($class);
-        }, true, true);
+        });
     }
 
     /**

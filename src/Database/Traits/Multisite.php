@@ -90,18 +90,20 @@ trait Multisite
 
         Site::withGlobalContext(function() {
             $otherModels = $this->newOtherSiteQuery()->get();
-            $otherSites = $otherModels->pluck('site_id')->all();
+            $otherSites = $this->getMultisiteSyncSites();
 
             // Propagate attributes to known records
             if ($this->propagatable) {
-                foreach ($otherModels as $model) {
-                    $this->propagateToSite($model->site_id, $model);
+                foreach ($otherSites as $siteId) {
+                    if ($model = $otherModels->where('site_id', $siteId)->first()) {
+                        $this->propagateToSite($siteId, $model);
+                    }
                 }
             }
 
             // Sync non-existent records
             if ($this->isMultisiteSyncEnabled()) {
-                $missingSites = array_diff($this->getMultisiteSyncSites(), $otherSites);
+                $missingSites = array_diff($otherSites, $otherModels->pluck('site_id')->all());
                 foreach ($missingSites as $missingSite) {
                     $this->propagateToSite($missingSite);
                 }
@@ -281,6 +283,18 @@ trait Multisite
     }
 
     /**
+     * getMultisiteKey returns the root key if multisite is used
+     */
+    public function getMultisiteKey()
+    {
+        if (!$this->isMultisiteEnabled()) {
+            return $this->getKey();
+        }
+
+        return $this->site_root_id ?: $this->getKey();
+    }
+
+    /**
      * isMultisiteEnabled allows for programmatic toggling
      * @return bool
      */
@@ -385,7 +399,7 @@ trait Multisite
 
         // Newly created model
         if (!$otherModel->exists) {
-            $otherModel->save();
+            $otherModel->save(['force' => true]);
         }
 
         // Restoring a trashed model

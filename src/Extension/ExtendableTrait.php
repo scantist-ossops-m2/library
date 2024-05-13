@@ -45,7 +45,7 @@ trait ExtendableTrait
     public function extendableConstruct()
     {
         // Apply init callbacks
-        $classes = array_merge([static::class], class_parents($this));
+        $classes = array_merge([static::class], class_parents(static::class));
         foreach ($classes as $class) {
             if (isset(Container::$classCallbacks[$class]) && is_array(Container::$classCallbacks[$class])) {
                 foreach (Container::$classCallbacks[$class] as $callback) {
@@ -435,7 +435,7 @@ trait ExtendableTrait
             }
         }
 
-        $parent = get_parent_class();
+        $parent = get_parent_class(self::class);
         if ($parent !== false && method_exists($parent, '__get')) {
             return parent::__get($name);
         }
@@ -468,7 +468,7 @@ trait ExtendableTrait
         }
 
         // This targets trait usage in particular
-        $parent = get_parent_class();
+        $parent = get_parent_class(self::class);
         if ($parent !== false && method_exists($parent, '__set')) {
             parent::__set($name, $value);
             $found = true;
@@ -504,7 +504,7 @@ trait ExtendableTrait
             return call_user_func_array($callable, $params);
         }
 
-        $parent = get_parent_class();
+        $parent = get_parent_class(self::class);
         if ($parent !== false && method_exists($parent, '__call')) {
             return parent::__call($name, $params);
         }

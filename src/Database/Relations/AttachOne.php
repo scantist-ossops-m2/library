@@ -43,6 +43,18 @@ class AttachOne extends MorphOneBase
             $value = reset($value);
         }
 
+        // Nulling the relationship
+        if (!$value) {
+            $this->parent->setRelation($this->relationName, null);
+
+            if ($this->parent->exists) {
+                $this->parent->bindEventOnce('model.afterSave', function() {
+                    $this->ensureRelationIsEmpty();
+                });
+            }
+            return;
+        }
+
         // Newly uploaded file
         if ($value instanceof UploadedFile) {
             $this->parent->bindEventOnce('model.afterSave', function () use ($value) {
@@ -67,6 +79,10 @@ class AttachOne extends MorphOneBase
 
         // The relation is set here to satisfy validation
         $this->parent->setRelation($this->relationName, $value);
+
+        $this->parent->bindEventOnce('model.afterValidate', function() {
+            $this->parent->unsetRelation($this->relationName);
+        });
     }
 
     /**

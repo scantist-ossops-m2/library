@@ -37,6 +37,8 @@ class HasMany extends HasManyBase
     {
         // Nulling the relationship
         if (!$value) {
+            $this->parent->unsetRelation($this->relationName);
+
             if ($this->parent->exists) {
                 $this->parent->bindEventOnce('model.afterSave', function() {
                     $this->ensureRelationIsEmpty();
