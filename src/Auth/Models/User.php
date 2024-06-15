@@ -479,7 +479,7 @@ class User extends Model
 
                     // We will make sure that the merged permission does not
                     // exactly match our permission, but starts with it.
-                    if ($checkPermission != $mergedPermission && starts_with($mergedPermission, $checkPermission) && $value === 1) {
+                    if ($checkPermission != $mergedPermission && starts_with($mergedPermission, $checkPermission) && (int) $value === 1) {
                         $matched = true;
                         break;
                     }
@@ -494,7 +494,7 @@ class User extends Model
 
                     // We will make sure that the merged permission does not
                     // exactly match our permission, but ends with it.
-                    if ($checkPermission != $mergedPermission && ends_with($mergedPermission, $checkPermission) && $value === 1) {
+                    if ($checkPermission != $mergedPermission && ends_with($mergedPermission, $checkPermission) && (int) $value === 1) {
                         $matched = true;
                         break;
                     }
@@ -513,7 +513,7 @@ class User extends Model
 
                         // We will make sure that the merged permission does not
                         // exactly match our permission, but starts with it.
-                        if ($checkMergedPermission != $permission && starts_with($permission, $checkMergedPermission) && $value === 1) {
+                        if ($checkMergedPermission != $permission && starts_with($permission, $checkMergedPermission) && (int) $value === 1) {
                             $matched = true;
                             break;
                         }
@@ -521,7 +521,7 @@ class User extends Model
 
                     // Otherwise, we'll fallback to standard permissions checking where
                     // we match that permissions explicitly exist.
-                    elseif ($permission === $mergedPermission && $mergedPermissions[$permission] === 1) {
+                    elseif ($permission === $mergedPermission && (int) $mergedPermissions[$permission] === 1) {
                         $matched = true;
                         break;
                     }
